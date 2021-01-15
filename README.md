@@ -1,6 +1,10 @@
 # desktop-app
 ### The Arendelle Odyssey desktop app
+
+[![Depfu](https://badges.depfu.com/badges/3eeda04dce8e840ac0f6fd2df351f7d2/count.svg)](https://depfu.com/github/ArendelleOdyssey/desktop-app?project_id=21228)
+
 ---
+
 ### Based on [@Ymke-N](https://github.com/Ymke-N) idea, create an application for everyone that integrate all with the AO Discord server and making it in a app
 
 ## The idea:
