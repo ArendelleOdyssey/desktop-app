@@ -5,10 +5,10 @@
 
 ## The idea:
 ### Page layout:
-[!Page layout](https://cdn.discordapp.com/attachments/784896906832510990/799738636534808656/AO_Page_layout.png)
+![Page layout](https://cdn.discordapp.com/attachments/784896906832510990/799738636534808656/AO_Page_layout.png)
 
 ### Wireframes:
-[!Wireframes](https://cdn.discordapp.com/attachments/784896906832510990/799739310844149840/Wireframes.png)
+![Wireframes](https://cdn.discordapp.com/attachments/784896906832510990/799739310844149840/Wireframes.png)
 
 ## Contributing
 
