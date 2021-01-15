@@ -1,0 +1,66 @@
+{
+  "name": "ao-desktop",
+  "version": "0.0.1",
+  "description": "Arendelle Odyssey application",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "npx eslint .",
+    "start": "electron . --no-sandbox",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArendelleOdyssey/desktop-app.git"
+  },
+  "build": {
+    "appId": "com.arendelleodyssey.app",
+    "productName": "Arendelle Odyssey",
+    "copyright": "${author}",
+    "artifactName": "${name}-setup-${version}.${ext}",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ArendelleOdyssey",
+        "repo": "desktop-app"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "icon": "build/icon.png",
+      "darkModeSupport": true,
+      "target": "dmg",
+      "publish": [
+        "github"
+      ]
+    },
+    "win": {
+      "publisherName": "${author}",
+      "icon": "build/icon.png",
+      "publish": [
+        "github"
+      ]
+    },
+    "linux": {
+      "target": "snap",
+      "category": "Utility",
+      "icon": "build/icon.png",
+      "publish": [
+        "github"
+      ]
+    }
+  },
+  "author": "Arendelle Odyssey",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ArendelleOdyssey/desktop-app/issues"
+  },
+  "homepage": "https://github.com/ArendelleOdyssey/desktop-app#readme",
+  "dependencies": {
+    "electron": "^11.2.0",
+    "electron-builder": "^22.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0"
+  }
+}
