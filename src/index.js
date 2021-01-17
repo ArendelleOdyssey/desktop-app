@@ -1,18 +1,23 @@
-const { autoUpdater } = require("electron-updater")
-autoUpdater.checkForUpdatesAndNotify() // we need to update only on loading window
 const {
     app,
     BrowserWindow,
     ipcMain
 } = require("electron")
 const path = require('path')
-// require('@treverix/remote/main').initialize() // for the custom titlebar (even on the web app)
+const execArgs = process.argv;
 
 var mainWindow = null
 var loadWindow = null
 var resolved
 
-app.on('ready', async () => createLoadWindow());
+app.on('ready', async () => {
+  if (execArgs.includes('--develop') || execArgs.includes('-d')) {
+    console.log('Started in develop mode (Updater will not start)')
+    createMainWindow();
+  } else {
+    createLoadWindow()
+  }
+});
   
 ipcMain.on('online', () => {
     resolved = true
@@ -47,7 +52,7 @@ function createLoadWindow(){
         else clearInterval(checkMaximize)
       }, 0)
     
-      //loadWindow.webContents.openDevTools()
+      loadWindow.webContents.openDevTools()
       //await wait(5000)
     
       loadWindow.once('close', () =>{
