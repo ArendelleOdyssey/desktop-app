@@ -1,3 +1,4 @@
+const { autoUpdater } = require("electron-updater")
 const {
     app,
     BrowserWindow,
@@ -13,9 +14,52 @@ var resolved
 app.on('ready', async () => {
   if (execArgs.includes('--develop') || execArgs.includes('-d')) {
     console.log('Started in develop mode (Updater will not start)')
-    createMainWindow();
+    return createMainWindow();
   } else {
-    createLoadWindow()
+    resolved = false
+    loadWindow = new BrowserWindow({
+      width: 400,
+      height: 500,
+      webPreferences: {
+        enableRemoteModule: true,
+        preload: path.join(__dirname, 'content', 'loadWindow', 'preload.js'),
+        nodeIntegration: false,
+      },
+      transparent: false,
+      backgroundColor: '#252525',
+      icon: 'build/icon.png',
+      title: 'Loading Arendelle Odyssey',
+      frame: false,
+      center: true,
+      show: false
+    });
+    loadWindow.loadURL(`file://${__dirname}/content/loadWindow/index.html`)
+    loadWindow.setAlwaysOnTop(true); 
+    loadWindow.once('ready-to-show', () => {
+      loadWindow.show();
+    });
+    var checkMaximize = setInterval(() => {
+      if (loadWindow != null) loadWindow.unmaximize()
+      else clearInterval(checkMaximize)
+    }, 0)
+  
+    //loadWindow.webContents.openDevTools()
+    //await wait(5000)
+
+    if (!autoUpdater.app.isPackaged) {
+      resolved = true
+      createMainWindow();
+    } else {
+      autoUpdater.checkForUpdatesAndNotify();
+    }
+  
+    loadWindow.once('close', () =>{
+      loadWindow = null
+      if (resolved == false) {
+        app.quit()
+        process.exit(0)
+      }
+    })
   }
 });
   
@@ -24,60 +68,19 @@ ipcMain.on('online', () => {
     createMainWindow();
 })
 
-function createLoadWindow(){
-    loadWindow = new BrowserWindow({
-        width: 400,
-        height: 500,
-        webPreferences: {
-          enableRemoteModule: true,
-          preload: path.join(__dirname, 'content', 'loadWindow', 'preload.js'),
-          nodeIntegration: false,
-        },
-        transparent: false,
-        backgroundColor: '#252525',
-        icon: 'build/icon.png',
-        title: 'Loading Arendelle Odyssey',
-        frame: false,
-        center: true,
-        show: false
-      });
-      loadWindow.loadFile(path.join(__dirname, 'content', 'loadWindow', 'index.html'))
-      loadWindow.setAlwaysOnTop(true); 
-      loadWindow.once('ready-to-show', () => {
-        loadWindow.show();
-        resolved = false
-      });
-      var checkMaximize = setInterval(() => {
-        if (loadWindow != null) loadWindow.unmaximize()
-        else clearInterval(checkMaximize)
-      }, 0)
-    
-      loadWindow.webContents.openDevTools()
-      //await wait(5000)
-    
-      loadWindow.once('close', () =>{
-        loadWindow = null
-        if (resolved == false) {
-          app.quit()
-          process.exit(0)
-        }
-      })
-}
-
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         show: false,
-        backgroundColor: '#000F42',
         icon: 'build/icon.png',
         title: 'Arendelle Odyssey',
-        frame: process.platform == 'darwin',  // the custom titlebar is useless on mac os
+        frame: true,  // the custom titlebar is useless on mac os
         webPreferences: {
             enableRemoteModule: true,
             preload: path.join(__dirname, 'content', 'mainWindow', 'preload.js'),
             nodeIntegration: false
         }
     })
-    mainWindow.loadFile(path.join(__dirname, 'content', 'mainWindow', 'index.html'))
+    mainWindow.loadURL(`file://${__dirname}/content/mainWindow/index.html`)
     mainWindow.setMenu(null)
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
@@ -94,5 +97,13 @@ function createMainWindow() {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
+    }
+})
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createMainWindow()
     }
 })
