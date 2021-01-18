@@ -1,5 +1,6 @@
 {
   "name": "ao-desktop",
+  "private": true,
   "version": "0.0.1",
   "description": "Arendelle Odyssey application",
   "main": "src/index.js",
@@ -50,7 +51,11 @@
       ]
     }
   },
-  "author": "Arendelle Odyssey",
+  "author": {
+    "name": "Arendelle Odyssey",
+    "email": "arendelleodyssey0@gmail.com",
+    "url": "https://arendelleodyssey.com/"
+  },
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/ArendelleOdyssey/desktop-app/issues"
@@ -59,11 +64,11 @@
   "dependencies": {
     "@treverix/custom-electron-titlebar": "^4.1.7",
     "electron-updater": "^4.3.5",
-    "ping": "^0.4.0"
+    "ping": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0",
-    "electron": "^11.2.0",
+    "electron": "^10.3.0",
     "electron-builder": "^22.9.1"
   }
 }

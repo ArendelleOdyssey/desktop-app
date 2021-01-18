@@ -1,16 +1,52 @@
 const { autoUpdater } = require("electron-updater")
-const {
-    app,
-    BrowserWindow,
-    ipcMain
-} = require("electron")
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const execArgs = process.argv;
+var closeLoadWindow
+var loadWindow
 
-var mainWindow = null
-var loadWindow = null
+function createMainWindow () {
+  // Create the browser window.
+    const mainWindow = new BrowserWindow({
+      show : false,
+      //backgroundColor: '#000F42',
+      icon: 'build/icon.png',
+      title: 'Arendelle Odyssey',
+      frame: true,
+      webPreferences: {
+        enableRemoteModule: true,
+        preload: path.join(__dirname, 'content', 'mainWindow', 'preload.js'),
+        nodeIntegration: false,
+      }
+    })
+    
+
+    mainWindow.setMenu(null);
+    
+    mainWindow.flashFrame(true)
+    mainWindow.once('focus', () => mainWindow.flashFrame(false))
+
+    // and load the index.html of the app.
+    //mainWindow.loadFile('content/mainWindow/index.html')
+    mainWindow.loadURL(`file://${__dirname}/content/mainWindow/index.html`)
+
+    //if (!window.isMaximized()) window.maximize()
+
+  // Open the DevTools.
+  //mainWindow.webContents.openDevTools()
+
+  mainWindow.on('ready-to-show', () => {
+    if (!mainWindow.isMaximized()) mainWindow.maximize()
+    mainWindow.show()
+    if (loadWindow != null) loadWindow.close();
+  })
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+//app.whenReady().then(createWindow)
 var resolved
-
 app.on('ready', async () => {
   if (execArgs.includes('--develop') || execArgs.includes('-d')) {
     console.log('Started in develop mode (Updater will not start)')
@@ -39,10 +75,13 @@ app.on('ready', async () => {
       loadWindow.show();
     });
     var checkMaximize = setInterval(() => {
-      if (loadWindow != null) loadWindow.unmaximize()
-      else clearInterval(checkMaximize)
+      if (loadWindow) loadWindow.unmaximize()
     }, 0)
-  
+    closeLoadWindow = () => {
+      clearInterval(checkMaximize)
+      loadWindow.close();
+    };
+
     //loadWindow.webContents.openDevTools()
     //await wait(5000)
 
@@ -50,9 +89,9 @@ app.on('ready', async () => {
       resolved = true
       createMainWindow();
     } else {
-      autoUpdater.checkForUpdatesAndNotify();
+      autoUpdater.checkForUpdates();
     }
-  
+
     loadWindow.once('close', () =>{
       loadWindow = null
       if (resolved == false) {
@@ -60,44 +99,25 @@ app.on('ready', async () => {
         process.exit(0)
       }
     })
+
+    ipcMain.on('closeLoad', () => {
+      if (loadWindow != null) closeLoadWindow()
+    })
   }
 });
-  
+
 ipcMain.on('online', () => {
-    resolved = true
-    createMainWindow();
+  resolved = true
+  createMainWindow();
 })
-
-function createMainWindow() {
-    mainWindow = new BrowserWindow({
-        show: false,
-        icon: 'build/icon.png',
-        title: 'Arendelle Odyssey',
-        frame: true,  // the custom titlebar is useless on mac os
-        webPreferences: {
-            enableRemoteModule: true,
-            preload: path.join(__dirname, 'content', 'mainWindow', 'preload.js'),
-            nodeIntegration: false
-        }
-    })
-    mainWindow.loadURL(`file://${__dirname}/content/mainWindow/index.html`)
-    mainWindow.setMenu(null)
-    mainWindow.once('ready-to-show', () => {
-        mainWindow.show();
-        if (loadWindow != null) loadWindow.close();
-    });
-    mainWindow.flashFrame(true)
-    mainWindow.once('focus', () => mainWindow.flashFrame(false))
-}
-
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
 })
 
 app.on('activate', () => {
@@ -107,3 +127,6 @@ app.on('activate', () => {
         createMainWindow()
     }
 })
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
