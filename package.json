@@ -62,9 +62,8 @@
   },
   "homepage": "https://github.com/ArendelleOdyssey/desktop-app#readme",
   "dependencies": {
-    "@treverix/custom-electron-titlebar": "^4.1.7",
-    "electron-updater": "^4.3.5",
-    "ping": "^0.3.0"
+    "custom-electron-titlebar": "^3.2.6",
+    "electron-updater": "^4.3.5"
   },
   "devDependencies": {
     "eslint": "^7.18.0",

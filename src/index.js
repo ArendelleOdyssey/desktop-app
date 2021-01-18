@@ -12,11 +12,12 @@ function createMainWindow () {
       //backgroundColor: '#000F42',
       icon: 'build/icon.png',
       title: 'Arendelle Odyssey',
-      frame: true,
+      frame: process.platform == 'darwin',
+      titleBarStyle: "hidden",
       webPreferences: {
         enableRemoteModule: true,
         preload: path.join(__dirname, 'content', 'mainWindow', 'preload.js'),
-        nodeIntegration: false,
+        nodeIntegration: true,
       }
     })
     
