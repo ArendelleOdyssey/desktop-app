@@ -1,11 +1,15 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
+const log = require('electron-log')
 const path = require('path')
+const EventEmitter = require('events');
+const customWindowEvent = new EventEmitter()
 
 var closeLoadWindow
 var loadWindow
 var resolved
 
-function createMainWindow () {
+customWindowEvent.on('create-main', ()=>{
+  resolved = true
   // Create the browser window.
     const mainWindow = new BrowserWindow({
       show : false,
@@ -20,6 +24,7 @@ function createMainWindow () {
         nodeIntegration: true,
       }
     })
+    log.verbose('Main window called')
     
     mainWindow.setMenu(null);
     
@@ -38,7 +43,7 @@ function createMainWindow () {
     mainWindow.show()
     if (loadWindow != null) loadWindow.close();
   })
-}
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -79,7 +84,7 @@ app.on('ready', async () => {
   //contents.openDevTools()
   //await wait(5000)
 
-  require('./autoUpdater.js')(contents, resolved, createMainWindow)
+  require('./autoUpdater.js')(contents, customWindowEvent)
   
   loadWindow.once('close', () =>{
     loadWindow = null
@@ -99,6 +104,7 @@ app.on('ready', async () => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    log.info('Goodbye!')
     app.quit()
   }
 })
@@ -107,7 +113,7 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-        createMainWindow()
+      customWindowEvent.emit('create-main')
     }
 })
 
