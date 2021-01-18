@@ -85,12 +85,19 @@ app.on('ready', async () => {
     //loadWindow.webContents.openDevTools()
     //await wait(5000)
 
-    if (!autoUpdater.app.isPackaged) {
+    try{
+      if (!autoUpdater.app.isPackaged) {
+        resolved = true
+        createMainWindow();
+      } else {
+        autoUpdater.checkForUpdates();
+      }
+    } catch (err) {
+      console.error(err)
       resolved = true
       createMainWindow();
-    } else {
-      autoUpdater.checkForUpdates();
     }
+    
 
     loadWindow.once('close', () =>{
       loadWindow = null
