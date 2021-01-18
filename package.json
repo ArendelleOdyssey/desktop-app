@@ -1,11 +1,12 @@
 {
   "name": "ao-desktop",
+  "private": true,
   "version": "0.0.1",
   "description": "Arendelle Odyssey application",
   "main": "src/index.js",
   "scripts": {
-    "test": "npx eslint .",
-    "start": "electron . --no-sandbox",
+    "test": "eslint src/.",
+    "start": "electron . --no-sandbox -d",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -50,17 +51,23 @@
       ]
     }
   },
-  "author": "Arendelle Odyssey",
+  "author": {
+    "name": "Arendelle Odyssey",
+    "email": "arendelleodyssey0@gmail.com",
+    "url": "https://arendelleodyssey.com/"
+  },
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/ArendelleOdyssey/desktop-app/issues"
   },
   "homepage": "https://github.com/ArendelleOdyssey/desktop-app#readme",
   "dependencies": {
-    "electron": "^11.2.0",
-    "electron-builder": "^22.9.1"
+    "custom-electron-titlebar": "^3.2.6",
+    "electron-updater": "^4.3.5"
   },
   "devDependencies": {
-    "eslint": "^7.17.0"
+    "eslint": "^7.18.0",
+    "electron": "^10.3.0",
+    "electron-builder": "^22.9.1"
   }
 }
