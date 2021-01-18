@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const titlebar = new customTitlebar.Titlebar({
         backgroundColor: customTitlebar.Color.fromHex('#000F42'),
-        icon: 'https://cdn.discordapp.com/attachments/729829070572879904/729833823403245647/logo_final_final.png',
+        icon: './icon.png',
         menu
     });
     titlebar.updateTitle('Arendelle Odyssey');
