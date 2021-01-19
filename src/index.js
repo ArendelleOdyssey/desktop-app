@@ -99,7 +99,7 @@ customWindowEvent.on('create-main', ()=>{
     })
     log.mainWindow = log.scope('Main');
     log.mainWindow.verbose('Main window called')
-    
+
     mainWindow.setMenu(null);
     
     mainWindow.flashFrame(true)
@@ -107,7 +107,7 @@ customWindowEvent.on('create-main', ()=>{
 
     mainWindow.webContents.on('devtools-opened', () => log.mainWindow.verbose('Dev Tools opened'))
     mainWindow.webContents.on('devtools-closed', () => log.mainWindowg.verbose('Dev Tools closed'))
-    
+
     // and load the index.html of the app.
     //mainWindow.loadFile('content/mainWindow/index.html')
     mainWindow.loadURL(`file://${__dirname}/content/mainWindow/index.html`)
@@ -121,4 +121,3 @@ customWindowEvent.on('create-main', ()=>{
     if (loadWindow != null) loadWindow.close();
   })
 })
-
