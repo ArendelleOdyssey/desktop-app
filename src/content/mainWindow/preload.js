@@ -14,48 +14,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const menu = new remote.Menu();
     menu.append(new remote.MenuItem({
       label: 'Help',
-      submenu: [
-        {
-          label: 'About',
-          click(){
-            log.verbose("About called")
-            var aboutWindow = openAboutWindow({
-              icon_path: `${__dirname}/icon.png`,
-              product_name: 'Arendelle Odyssey',
-              description: "The Arendelle Odyssey App",
-              homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
-              license: 'GPL-3.0',
-              use_version_info: true,
-              adjust_window_size: false,
-              use_inner_html: true,
-              bug_report_url: 'https://github.com/ArendelleOdyssey/desktop-app/issues',
-              bug_link_text: '🐛 Found bug?',
-              open_devtools: false,
-              win_options: {
-                show: false,
-                maximizable: false,
-                resizable: false,
-                minimizable: false,
-                alwaysOnTop: true
-              }
-            });
-            aboutWindow.setTitle('About Arendelle Odyssey')
-            aboutWindow.on('ready-to-show', () =>{
-              aboutWindow.show()
-            })
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Exit',
-          click(){
-            window.close()
-          }
+      submenu: [{
+        label: 'About',
+        click(){
+          log.verbose("About called")
+          var aboutWindow = openAboutWindow({
+            icon_path: `${__dirname}/icon.png`,
+            product_name: 'Arendelle Odyssey',
+            description: "The Arendelle Odyssey App",
+            homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
+            license: 'GPL-3.0',
+            use_version_info: true,
+            adjust_window_size: false,
+            use_inner_html: true,
+            bug_report_url: 'https://github.com/ArendelleOdyssey/desktop-app/issues',
+            bug_link_text: '🐛 Found bug?',
+            open_devtools: false,
+            win_options: {
+              show: false,
+              maximizable: false,
+              resizable: false,
+              minimizable: false,
+              alwaysOnTop: true,
+              parent: remote.getCurrentWindow()
+            }
+          });
+          aboutWindow.setTitle('About Arendelle Odyssey')
+          aboutWindow.on('ready-to-show', () =>{
+            aboutWindow.show()
+          })
         }
-      ]
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Exit',
+        click(){
+          window.close()
+        }
+      }]
     }));
+
+    if (remote.require('./checkDevMode.js')) {
+      menu.append(new remote.MenuItem({
+        label: 'Developer Mode',
+        submenu: [{
+          label: 'Toggle Developer Tools',
+          accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',	
+          click (item, focusedWindow) {
+            if (focusedWindow) remote.getCurrentWebContents().toggleDevTools()
+          }	
+        },
+        {
+          label: 'Open Log Folder',
+          click(){
+            remote.shell.showItemInFolder(log.transports.file.getFile().path)
+          }
+        }]
+      }));
+    }
 
     const titlebar = new customTitlebar.Titlebar({
         backgroundColor: customTitlebar.Color.fromHex('#000F42'),

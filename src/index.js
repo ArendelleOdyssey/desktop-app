@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const log = require('electron-log')
+console.log(log.transports.file.getFile().path)
 const path = require('path')
 const EventEmitter = require('events');
 const customWindowEvent = new EventEmitter()
@@ -7,43 +8,6 @@ const customWindowEvent = new EventEmitter()
 var closeLoadWindow
 var loadWindow
 var resolved
-
-customWindowEvent.on('create-main', ()=>{
-  resolved = true
-  // Create the browser window.
-    const mainWindow = new BrowserWindow({
-      show : false,
-      //backgroundColor: '#000F42',
-      icon: 'build/icon.png',
-      title: 'Arendelle Odyssey',
-      frame: process.platform == 'darwin',
-      titleBarStyle: "hidden",
-      webPreferences: {
-        enableRemoteModule: true,
-        preload: path.join(__dirname, 'content', 'mainWindow', 'preload.js'),
-        nodeIntegration: true,
-      }
-    })
-    log.verbose('Main window called')
-    
-    mainWindow.setMenu(null);
-    
-    mainWindow.flashFrame(true)
-    mainWindow.once('focus', () => mainWindow.flashFrame(false))
-
-    // and load the index.html of the app.
-    //mainWindow.loadFile('content/mainWindow/index.html')
-    mainWindow.loadURL(`file://${__dirname}/content/mainWindow/index.html`)
-
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
-
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow.isMaximized()) mainWindow.maximize()
-    mainWindow.show()
-    if (loadWindow != null) loadWindow.close();
-  })
-})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -117,5 +81,44 @@ app.on('activate', () => {
     }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+customWindowEvent.on('create-main', ()=>{
+  resolved = true
+  // Create the browser window.
+    const mainWindow = new BrowserWindow({
+      show : false,
+      //backgroundColor: '#000F42',
+      icon: 'build/icon.png',
+      title: 'Arendelle Odyssey',
+      frame: process.platform == 'darwin',
+      titleBarStyle: "hidden",
+      webPreferences: {
+        enableRemoteModule: true,
+        preload: path.join(__dirname, 'content', 'mainWindow', 'preload.js'),
+        nodeIntegration: true,
+      }
+    })
+    log.mainWindow = log.scope('Main');
+    log.mainWindow.verbose('Main window called')
+    
+    mainWindow.setMenu(null);
+    
+    mainWindow.flashFrame(true)
+    mainWindow.once('focus', () => mainWindow.flashFrame(false))
+
+    mainWindow.webContents.on('devtools-opened', () => log.mainWindow.verbose('Dev Tools opened'))
+    mainWindow.webContents.on('devtools-closed', () => log.mainWindowg.verbose('Dev Tools closed'))
+    
+    // and load the index.html of the app.
+    //mainWindow.loadFile('content/mainWindow/index.html')
+    mainWindow.loadURL(`file://${__dirname}/content/mainWindow/index.html`)
+
+  // Open the DevTools.
+  //mainWindow.webContents.openDevTools()
+
+  mainWindow.on('ready-to-show', () => {
+    if (!mainWindow.isMaximized()) mainWindow.maximize()
+    mainWindow.show()
+    if (loadWindow != null) loadWindow.close();
+  })
+})
+
