@@ -1,7 +1,7 @@
 {
   "name": "ao-desktop",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2-pre",
   "description": "Arendelle Odyssey application",
   "main": "src/index.js",
   "scripts": {
@@ -62,8 +62,11 @@
   },
   "homepage": "https://github.com/ArendelleOdyssey/desktop-app#readme",
   "dependencies": {
+    "about-window": "^1.13.4",
     "custom-electron-titlebar": "^3.2.6",
-    "electron-updater": "^4.3.5"
+    "electron-log": "^4.3.1",
+    "electron-updater": "^4.3.5",
+    "ping": "^0.4.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0",
