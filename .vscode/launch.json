@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Run ESLint",
+            "program": "${workspaceFolder}",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/eslint",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "Electron Main",
             "program": "${workspaceFolder}",
             "request": "launch",
