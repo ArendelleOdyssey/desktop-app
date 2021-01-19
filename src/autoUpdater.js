@@ -3,13 +3,13 @@ const log = require('electron-log')
 const wait = require('util').promisify(setTimeout);
 const ping = require('ping')
 const EventEmitter = require('events');
-const execArgs = process.argv;
+const devMode = require('./checkDevMode.js')
 function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 module.exports = function(contents, customWindowEvent){
     try{
-        if (!autoUpdater.app.isPackaged || execArgs.includes('--develop') || execArgs.includes('-d')) {
+        if (devMode) {
             log.info('App started in dev mode')
             customWindowEvent.emit('create-main')
         } else {

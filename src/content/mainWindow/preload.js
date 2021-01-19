@@ -22,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
           var aboutWindow = openAboutWindow({
             icon_path: `${__dirname}/icon.png`,
             product_name: 'Arendelle Odyssey',
-            description: `The Arendelle Odyssey App${devMode ? '\n(Developer mode enabled 👨‍💻)' : ''}`,
+            description: `The Arendelle Odyssey App`,
             homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
             license: 'GPL-3.0',
             use_version_info: true,
             adjust_window_size: false,
             use_inner_html: true,
-            bug_report_url: devMode?'https://gist.githubusercontent.com/GreepTheSheep/f468c9ccd2d47c8ce294d7ef395dfd2e/raw/7a9a97ca52641a51b4a4a5e95c1b7716f54140f4/ao-desktop-easteregg.txt':'https://github.com/ArendelleOdyssey/desktop-app/issues',
+            bug_report_url: devMode?'https://gist.githubusercontent.com/GreepTheSheep/f468c9ccd2d47c8ce294d7ef395dfd2e/raw/d6c5f631b9e5b336df9585d39e01cffdc70bfae8/find-it-yourself':'https://github.com/ArendelleOdyssey/desktop-app/issues',
             bug_link_text: '🐛 Found bug?',
             open_devtools: false,
             win_options: {
