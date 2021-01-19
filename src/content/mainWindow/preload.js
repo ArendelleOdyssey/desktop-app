@@ -4,6 +4,7 @@ const customTitlebar = require('custom-electron-titlebar');
 const {remote} = require('electron')
 const openAboutWindow = require('about-window').default
 const log = require('electron-log')
+const devMode = remote.require('./checkDevMode.js')
 
 document.addEventListener('DOMContentLoaded', () => {
   // It does not make sense to use the custom titlebar on macOS where
@@ -21,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
           var aboutWindow = openAboutWindow({
             icon_path: `${__dirname}/icon.png`,
             product_name: 'Arendelle Odyssey',
-            description: "The Arendelle Odyssey App",
+            description: `The Arendelle Odyssey App${devMode ? '\n(Developer mode enabled 👨‍💻)' : ''}`,
             homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
             license: 'GPL-3.0',
             use_version_info: true,
             adjust_window_size: false,
             use_inner_html: true,
-            bug_report_url: 'https://github.com/ArendelleOdyssey/desktop-app/issues',
+            bug_report_url: devMode?'https://gist.githubusercontent.com/GreepTheSheep/f468c9ccd2d47c8ce294d7ef395dfd2e/raw/7a9a97ca52641a51b4a4a5e95c1b7716f54140f4/ao-desktop-easteregg.txt':'https://github.com/ArendelleOdyssey/desktop-app/issues',
             bug_link_text: '🐛 Found bug?',
             open_devtools: false,
             win_options: {
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }]
     }));
 
-    if (remote.require('./checkDevMode.js')) {
+    if (devMode) {
       menu.append(new remote.MenuItem({
         label: 'Developer Mode',
         submenu: [{
@@ -80,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         icon: './icon.png',
         menu
     });
-    titlebar.updateTitle('Arendelle Odyssey');
+    titlebar.updateTitle(`${devMode?'👨‍💻 ':''}Arendelle Odyssey`);
   }
 })
 
