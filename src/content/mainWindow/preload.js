@@ -4,7 +4,6 @@ const customTitlebar = require('custom-electron-titlebar');
 const {remote} = require('electron')
 const openAboutWindow = require('about-window').default
 const log = require('electron-log')
-const path = require('path')
 
 document.addEventListener('DOMContentLoaded', () => {
   // It does not make sense to use the custom titlebar on macOS where
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
               icon_path: `${__dirname}/icon.png`,
               product_name: 'Arendelle Odyssey',
               description: "The Arendelle Odyssey App",
-              homepage: 'https://arendelleodyssey.com',
+              homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
               license: 'GPL-3.0',
               use_version_info: true,
               adjust_window_size: false,
@@ -33,17 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
               bug_link_text: '🐛 Found bug?',
               open_devtools: false,
               win_options: {
-                frame: process.platform == 'darwin',
-                titleBarStyle: "hidden",
-                webPreferences: {
-                  enableRemoteModule: true,
-                  preload: path.join(__dirname, '..', 'aboutWindow', 'preload.js'),
-                  nodeIntegration: true,
-                }
+                show: false,
+                maximizable: false,
+                resizable: false,
+                minimizable: false,
+                alwaysOnTop: true
               }
             });
-            aboutWindow.setMaximumSize(416,439)
-            aboutWindow.setMinimumSize(416,439)
+            aboutWindow.setTitle('About Arendelle Odyssey')
+            aboutWindow.on('ready-to-show', () =>{
+              aboutWindow.show()
+            })
           }
         },
         {
