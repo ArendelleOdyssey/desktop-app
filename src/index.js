@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const log = require('electron-log')
-console.log(log.transports.file.getFile().path)
 const path = require('path')
 const EventEmitter = require('events');
 const customWindowEvent = new EventEmitter()
@@ -29,18 +28,16 @@ app.on('ready', async () => {
     title: 'Loading Arendelle Odyssey',
     frame: false,
     center: true,
-    show: false
+    show: false,
+    maximizable: false,
+    minimizable: false
   });
   loadWindow.loadURL(`file://${__dirname}/content/loadWindow/index.html`)
   loadWindow.setAlwaysOnTop(true); 
   loadWindow.once('ready-to-show', () => {
     loadWindow.show();
   });
-  var checkMaximize = setInterval(() => {
-    if (loadWindow) loadWindow.unmaximize()
-  }, 0)
   closeLoadWindow = () => {
-    clearInterval(checkMaximize)
     loadWindow.close();
   };
 
@@ -85,6 +82,8 @@ customWindowEvent.on('create-main', ()=>{
   resolved = true
   // Create the browser window.
     const mainWindow = new BrowserWindow({
+      minWidth: 500,
+      minHeight: 200,
       show : false,
       //backgroundColor: '#000F42',
       icon: 'build/icon.png',
@@ -106,7 +105,7 @@ customWindowEvent.on('create-main', ()=>{
     mainWindow.once('focus', () => mainWindow.flashFrame(false))
 
     mainWindow.webContents.on('devtools-opened', () => log.mainWindow.verbose('Dev Tools opened'))
-    mainWindow.webContents.on('devtools-closed', () => log.mainWindowg.verbose('Dev Tools closed'))
+    mainWindow.webContents.on('devtools-closed', () => log.mainWindow.verbose('Dev Tools closed'))
 
     // and load the index.html of the app.
     //mainWindow.loadFile('content/mainWindow/index.html')
@@ -116,7 +115,7 @@ customWindowEvent.on('create-main', ()=>{
   //mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
-    if (!mainWindow.isMaximized()) mainWindow.maximize()
+    if (!mainWindow.isVisible() && !mainWindow.isMaximized()) mainWindow.maximize()
     mainWindow.show()
     if (loadWindow != null) loadWindow.close();
   })

@@ -5,6 +5,7 @@ const {remote} = require('electron')
 const openAboutWindow = require('about-window').default
 const log = require('electron-log')
 const devMode = remote.require('./checkDevMode.js')
+const keyShorts = require('./keyboardShortcut.js')
 
 document.addEventListener('DOMContentLoaded', () => {
   // It does not make sense to use the custom titlebar on macOS where
@@ -20,29 +21,29 @@ document.addEventListener('DOMContentLoaded', () => {
         click(){
           log.verbose("About called")
           var aboutWindow = openAboutWindow({
-            icon_path: `${__dirname}/icon.png`,
-            product_name: 'Arendelle Odyssey',
-            description: `The Arendelle Odyssey App`,
-            homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
-            license: 'GPL-3.0',
-            use_version_info: true,
-            adjust_window_size: false,
-            use_inner_html: true,
-            bug_report_url: devMode?'https://gist.githubusercontent.com/GreepTheSheep/f468c9ccd2d47c8ce294d7ef395dfd2e/raw/d6c5f631b9e5b336df9585d39e01cffdc70bfae8/find-it-yourself':'https://github.com/ArendelleOdyssey/desktop-app/issues',
-            bug_link_text: '🐛 Found bug?',
-            open_devtools: false,
-            win_options: {
+          icon_path: `${__dirname}/icon.png`,
+          product_name: 'Arendelle Odyssey',
+          description: `The Arendelle Odyssey App`,
+          homepage: 'https://github.com/ArendelleOdyssey/desktop-app',
+          license: 'GPL-3.0',
+          use_version_info: true,
+          adjust_window_size: false,
+          use_inner_html: true,
+          bug_report_url: devMode?'https://gist.githubusercontent.com/GreepTheSheep/f468c9ccd2d47c8ce294d7ef395dfd2e/raw/d6c5f631b9e5b336df9585d39e01cffdc70bfae8/find-it-yourself':'https://github.com/ArendelleOdyssey/desktop-app/issues',
+          bug_link_text: '🐛 Found bug?',
+          open_devtools: false,
+          win_options: {
               show: false,
               maximizable: false,
               resizable: false,
               minimizable: false,
               alwaysOnTop: true,
               parent: remote.getCurrentWindow()
-            }
+          }
           });
           aboutWindow.setTitle('About Arendelle Odyssey')
           aboutWindow.on('ready-to-show', () =>{
-            aboutWindow.show()
+          aboutWindow.show()
           })
         }
       },
@@ -63,14 +64,48 @@ document.addEventListener('DOMContentLoaded', () => {
         submenu: [{
           label: 'Toggle Developer Tools',
           accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',	
-          click (item, focusedWindow) {
-            if (focusedWindow) remote.getCurrentWebContents().toggleDevTools()
-          }	
+          click(){
+            keyShorts.toggleDevTools()
+          }
         },
         {
           label: 'Open Log Folder',
           click(){
             remote.shell.showItemInFolder(log.transports.file.getFile().path)
+          }
+        }]
+      }));
+      
+      menu.append(new remote.MenuItem({
+        label: 'Test',
+        submenu: [{
+          label: 'Open a window',	
+          click(){
+            log.verbose('a window will appear!')
+            const win = new remote.BrowserWindow({
+              show : false,
+              //backgroundColor: '#000F42',
+              icon: 'build/icon.png',
+              title: 'Arendelle Odyssey',
+              // parent: remote.getCurrentWindow(),
+              webPreferences: {
+                enableRemoteModule: true,
+                nodeIntegration: true,
+              }
+            })
+        
+            win.setMenu(null);
+        
+            // and load the index.html of the app.
+            //win.loadFile('content/win/index.html')
+            win.loadURL(`file://${__dirname}/index.html`)
+        
+            // Open the DevTools.
+            //win.webContents.openDevTools()
+          
+            win.on('ready-to-show', () => {
+              win.show()
+            })
           }
         }]
       }));
@@ -82,6 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
         menu
     });
     titlebar.updateTitle(`${devMode?'👨‍💻 ':''}Arendelle Odyssey`);
+
+    keyShorts.initKeys()
   }
 })
 
