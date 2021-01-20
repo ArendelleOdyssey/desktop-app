@@ -1,0 +1,17 @@
+@font-face {
+    font-family: ice-kingdom;
+    src: url(../libs/ice-kingdom.woff2);
+}
+.titlebar{
+    z-index: 999999;
+    font-family: arial;
+}
+.window-title{
+    font-family: ice-kingdom;
+}
+
+.banner-img{
+    min-width:100%;
+    max-width:100%;
+    height: auto;
+}

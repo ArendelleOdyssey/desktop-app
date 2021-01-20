@@ -66,6 +66,7 @@
     "custom-electron-titlebar": "^3.2.6",
     "electron-log": "^4.3.1",
     "electron-updater": "^4.3.5",
+    "fs": "0.0.1-security",
     "mousetrap": "^1.6.5"
   },
   "devDependencies": {

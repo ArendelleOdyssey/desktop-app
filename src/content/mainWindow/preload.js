@@ -6,6 +6,7 @@ const openAboutWindow = require('about-window').default
 const log = require('electron-log')
 const devMode = remote.require('./functions/checkDevMode.js')
 const keyShorts = require('./keyboardShortcut.js')
+const fs = require('fs')
 
 document.addEventListener('DOMContentLoaded', () => {
   // It does not make sense to use the custom titlebar on macOS where
@@ -119,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     titlebar.updateTitle(`${devMode?'👨‍💻 ':''}Arendelle Odyssey`);
 
     keyShorts.initKeys()
+    keyShorts.konami()
   }
 })
 
@@ -128,19 +130,7 @@ document.addEventListener('readystatechange', () => {
     var head = document.getElementsByTagName('head')[0];
     var sty = document.createElement('style');
     sty.type = 'text/css';
-    var css = `
-      @font-face {
-        font-family: ice-kingdom;
-        src: url(../libs/ice-kingdom.woff2);
-      }
-      .titlebar{
-        z-index: 999999;
-        font-family: arial;
-      }
-      .window-title{
-        font-family: ice-kingdom;
-      }
-      ` // You can compress all css files you need and put here
+    var css = fs.readFileSync(__dirname+'/renderStyle.css', 'utf-8')
     if (sty.styleSheet){
       sty.styleSheet.cssText = css;
     } else {
