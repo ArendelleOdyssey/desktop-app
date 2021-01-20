@@ -4,7 +4,7 @@ const customTitlebar = require('custom-electron-titlebar');
 const {remote} = require('electron')
 const openAboutWindow = require('about-window').default
 const log = require('electron-log')
-const devMode = remote.require('./checkDevMode.js')
+const devMode = remote.require('./functions/checkDevMode.js')
 const keyShorts = require('./keyboardShortcut.js')
 
 document.addEventListener('DOMContentLoaded', () => {
