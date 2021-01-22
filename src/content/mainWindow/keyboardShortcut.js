@@ -11,6 +11,9 @@ module.exports = {
         mousetrap.bind(['alt+command+i', 'ctrl+shift+i'], () =>{
             toggleDevTools()
         })
+        mousetrap.bind(['command+r', 'ctrl+r'], () =>{
+            window.location.reload(true)
+        })
     },
     konami: () => {
         mousetrap.bind('up up down down left right left right enter', () => {
