@@ -16,6 +16,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // add a menu
     const menu = new remote.Menu();
     menu.append(new remote.MenuItem({
+      label: 'File',
+      submenu: [{
+        label: 'Open website',
+        accelerator: process.platform === 'darwin' ? 'Command+M' : 'Ctrl+M',	
+        click(){
+          keyShorts.openWebsite()
+        }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Exit',
+        click(){
+          window.close()
+        }
+      }]
+    }));
+
+    menu.append(new remote.MenuItem({
       label: 'Help',
       submenu: [{
         label: 'About',
@@ -46,15 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
           aboutWindow.on('ready-to-show', () =>{
           aboutWindow.show()
           })
-        }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Exit',
-        click(){
-          window.close()
         }
       }]
     }));
