@@ -3,8 +3,11 @@ const log = require('electron-log')
 const path = require('path')
 const EventEmitter = require('events');
 const customWindowEvent = new EventEmitter()
+const params = require('./functions/checkParams.js')
 
-var closeLoadWindow
+log.mainWindow = log.scope('Main');
+log.webWindow = log.scope('Website');
+
 var loadWindow
 var resolved
 
@@ -33,19 +36,10 @@ app.on('ready', async () => {
   });
   loadWindow.loadURL(`file://${__dirname}/content/loadWindow/index.html`)
   loadWindow.setAlwaysOnTop(true); 
+
   loadWindow.once('ready-to-show', () => {
     loadWindow.show();
   });
-  closeLoadWindow = () => {
-    loadWindow.close();
-  };
-
-  var contents = loadWindow.webContents
-  //contents.openDevTools()
-  //await wait(5000)
-
-  require('./functions/autoUpdater.js')(contents, customWindowEvent)
-  
   loadWindow.once('close', () =>{
     loadWindow = null
     if (resolved == false) {
@@ -54,9 +48,21 @@ app.on('ready', async () => {
     }
   })
 
-  ipcMain.on('closeLoad', () => {
-    if (loadWindow != null) closeLoadWindow()
-  })
+  var contents = loadWindow.webContents
+  //contents.openDevTools()
+  
+  if (params.website) {
+    log.info('App started in web mode')
+    customWindowEvent.emit('create-web')
+    return
+  }
+
+  if (params.devMode) {
+    log.info('App started in dev mode')
+    customWindowEvent.emit('create-main')
+  } else {
+    require('./functions/autoUpdater.js')(contents, customWindowEvent)
+  }
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -95,7 +101,6 @@ customWindowEvent.on('create-main', ()=>{
         nodeIntegration: true,
       }
     })
-    log.mainWindow = log.scope('Main');
     log.mainWindow.verbose('Main window called')
 
     mainWindow.setMenu(null);
@@ -121,6 +126,11 @@ customWindowEvent.on('create-main', ()=>{
 })
 
 ipcMain.on('open-website', () => {
+  customWindowEvent.emit('create-web')
+})
+
+customWindowEvent.on('create-web', ()=>{
+  resolved = true
   const aodns = 'arendelleodyssey.com'
   var webWindow = new BrowserWindow({
     minWidth: 500,
@@ -147,20 +157,23 @@ ipcMain.on('open-website', () => {
   if (!webWindow.isMaximized()) webWindow.maximize()
 
   webWindow.webContents.on('new-window', function(e, url) {
-    if (!url.includes(aodns)){
-      e.preventDefault();
-      require('electron').shell.openExternal(url);
-    }
+    log.webWindow.info(`New window to ${url} opened in browser`)
+    e.preventDefault();
+    require('electron').shell.openExternal(url);
   });
   
   webWindow.webContents.on('will-navigate', (e, url) => {
-    if (!url.includes(aodns)){
+    if (!url.includes(aodns) || url.includes('wp.com')){
       e.preventDefault();
       require('electron').shell.openExternal(url);
+      log.webWindow.info(`Navigate to ${url} opened in browser`)
+    } else {
+      log.webWindow.info(`Navigate to ${url}`)
     }
   })
 
   webWindow.on('ready-to-show', () => {
     webWindow.show()
+    if (loadWindow != null) loadWindow.close();
   })
 })

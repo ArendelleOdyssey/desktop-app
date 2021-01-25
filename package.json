@@ -7,6 +7,7 @@
   "scripts": {
     "test": "eslint src/.",
     "start": "electron . --no-sandbox -d",
+    "web": "electron . --no-sandbox -w",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -67,7 +68,8 @@
     "electron-log": "^4.3.1",
     "electron-updater": "^4.3.5",
     "fs": "0.0.1-security",
-    "mousetrap": "^1.6.5"
+    "mousetrap": "^1.6.5",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "eslint": "^7.18.0",

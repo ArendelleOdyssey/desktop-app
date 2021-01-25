@@ -1,13 +1,14 @@
 const mousetrap = require('mousetrap')
 const remote = require('electron').remote
 const log = require('electron-log')
+log.mainWindow = log.scope('Main')
 const {ipcRenderer} = require('electron')
 
 function toggleDevTools(){
     remote.getCurrentWebContents().toggleDevTools()
 }
 function openWebsite(){
-    log.verbose('Website window called')
+    log.mainWindow.verbose('Website window called')
     ipcRenderer.send('open-website')
 }
 

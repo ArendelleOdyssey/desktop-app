@@ -4,7 +4,8 @@ const customTitlebar = require('custom-electron-titlebar');
 const {remote} = require('electron')
 const openAboutWindow = require('about-window').default
 const log = require('electron-log')
-const devMode = remote.require('./functions/checkDevMode.js')
+log.mainWindow = log.scope('Main')
+const {devMode} = remote.require('./functions/checkParams.js')
 const keyShorts = require('./keyboardShortcut.js')
 const fs = require('fs')
 
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submenu: [{
         label: 'About',
         click(){
-          log.verbose("About called")
+          log.mainWindow.verbose("About called")
           var aboutWindow = openAboutWindow({
           icon_path: `${__dirname}/icon.png`,
           product_name: 'Arendelle Odyssey',
