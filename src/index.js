@@ -119,3 +119,48 @@ customWindowEvent.on('create-main', ()=>{
     if (loadWindow != null) loadWindow.close();
   })
 })
+
+ipcMain.on('open-website', () => {
+  const aodns = 'arendelleodyssey.com'
+  var webWindow = new BrowserWindow({
+    minWidth: 500,
+    minHeight: 200,
+    show : false,
+    backgroundColor: '#000F42',
+    icon: 'build/icon.png',
+    title: 'Arendelle Odyssey',
+    frame: process.platform == 'darwin',
+    titleBarStyle: "hidden",
+    webPreferences: {
+      enableRemoteModule: true,
+      preload: path.join(__dirname, 'content', 'websiteWindow', 'preload.js'),
+      nodeIntegration: true,
+    }
+  })
+  webWindow.setMenu(null);
+  
+  webWindow.flashFrame(true)
+  webWindow.once('focus', () => webWindow.flashFrame(false))
+
+  webWindow.loadURL('https://'+aodns)
+
+  if (!webWindow.isMaximized()) webWindow.maximize()
+
+  webWindow.webContents.on('new-window', function(e, url) {
+    if (!url.includes(aodns)){
+      e.preventDefault();
+      require('electron').shell.openExternal(url);
+    }
+  });
+  
+  webWindow.webContents.on('will-navigate', (e, url) => {
+    if (!url.includes(aodns)){
+      e.preventDefault();
+      require('electron').shell.openExternal(url);
+    }
+  })
+
+  webWindow.on('ready-to-show', () => {
+    webWindow.show()
+  })
+})
