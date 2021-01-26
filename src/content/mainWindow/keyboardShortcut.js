@@ -20,7 +20,7 @@ module.exports = {
             toggleDevTools()
         })
         mousetrap.bind(['command+r', 'ctrl+r'], () =>{
-            window.location.reload(true)
+            window.location.reload()
         })
         mousetrap.bind(['command+m', 'ctrl+m'], () =>{
             openWebsite()
