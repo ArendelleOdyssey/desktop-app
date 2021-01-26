@@ -101,7 +101,7 @@ customWindowEvent.on('create-main', ()=>{
         nodeIntegration: true,
       }
     })
-    log.mainWindow.verbose('Main window called')
+    log.mainWindow.verbose('Window created')
 
     mainWindow.setMenu(null);
     
@@ -122,6 +122,9 @@ customWindowEvent.on('create-main', ()=>{
     if (!mainWindow.isVisible() && !mainWindow.isMaximized()) mainWindow.maximize()
     mainWindow.show()
     if (loadWindow != null) loadWindow.close();
+  })
+  mainWindow.on('close', () => {
+    log.mainWindow.verbose('Window closed')
   })
 })
 
