@@ -8,15 +8,15 @@ const params = require('./functions/checkParams.js')
 log.mainWindow = log.scope('Main');
 log.webWindow = log.scope('Website');
 
-var loadWindow
-var resolved
+var loadWindow = null
+var resolved  = false
+var webWindow = null
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 //app.whenReady().then(createWindow)
 app.on('ready', async () => {
-  resolved = false
   loadWindow = new BrowserWindow({
     width: 400,
     height: 500,
@@ -131,49 +131,60 @@ ipcMain.on('open-website', () => {
 
 customWindowEvent.on('create-web', ()=>{
   resolved = true
-  const aodns = 'arendelleodyssey.com'
-  var webWindow = new BrowserWindow({
-    minWidth: 500,
-    minHeight: 200,
-    show : false,
-    backgroundColor: '#000F42',
-    icon: 'build/icon.png',
-    title: 'Arendelle Odyssey',
-    frame: process.platform == 'darwin',
-    titleBarStyle: "hidden",
-    webPreferences: {
-      enableRemoteModule: true,
-      preload: path.join(__dirname, 'content', 'websiteWindow', 'preload.js'),
-      nodeIntegration: true,
-    }
-  })
-  webWindow.setMenu(null);
-  
-  webWindow.flashFrame(true)
-  webWindow.once('focus', () => webWindow.flashFrame(false))
+  if (webWindow != null) {
+    log.webWindow.verbose('Window focused')
+    webWindow.focus()
+  } else {
+    log.webWindow.verbose('Window created')
+    const aodns = 'arendelleodyssey.com'
+    webWindow = new BrowserWindow({
+      minWidth: 500,
+      minHeight: 200,
+      show : false,
+      backgroundColor: '#000F42',
+      icon: 'build/icon.png',
+      title: 'Arendelle Odyssey',
+      frame: process.platform == 'darwin',
+      titleBarStyle: "hidden",
+      webPreferences: {
+        enableRemoteModule: true,
+        preload: path.join(__dirname, 'content', 'websiteWindow', 'preload.js'),
+        nodeIntegration: true,
+      }
+    })
+    webWindow.setMenu(null);
+    
+    webWindow.flashFrame(true)
+    webWindow.once('focus', () => webWindow.flashFrame(false))
 
-  webWindow.loadURL('https://'+aodns)
+    webWindow.loadURL('https://'+aodns)
 
-  if (!webWindow.isMaximized()) webWindow.maximize()
+    if (!webWindow.isMaximized()) webWindow.maximize()
 
-  webWindow.webContents.on('new-window', function(e, url) {
-    log.webWindow.info(`New window to ${url} opened in browser`)
-    e.preventDefault();
-    require('electron').shell.openExternal(url);
-  });
-  
-  webWindow.webContents.on('will-navigate', (e, url) => {
-    if (!url.includes(aodns) || url.includes('wp.com')){
+    webWindow.webContents.on('new-window', function(e, url) {
+      log.webWindow.info(`New window to ${url} opened in browser`)
       e.preventDefault();
       require('electron').shell.openExternal(url);
-      log.webWindow.info(`Navigate to ${url} opened in browser`)
-    } else {
-      log.webWindow.info(`Navigate to ${url}`)
-    }
-  })
+    });
+    
+    webWindow.webContents.on('will-navigate', (e, url) => {
+      if (!url.includes(aodns) || url.includes('wp.com')){
+        e.preventDefault();
+        require('electron').shell.openExternal(url);
+        log.webWindow.info(`Navigate to ${url} opened in browser`)
+      } else {
+        log.webWindow.info(`Navigate to ${url}`)
+      }
+    })
 
-  webWindow.on('ready-to-show', () => {
-    webWindow.show()
-    if (loadWindow != null) loadWindow.close();
-  })
+    webWindow.on('ready-to-show', () => {
+      webWindow.show()
+      if (loadWindow != null) loadWindow.close();
+    })
+
+    webWindow.on('close', () => {
+      webWindow = null
+      log.webWindow.verbose('Window closed')
+    })
+  }
 })
