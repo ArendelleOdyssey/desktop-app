@@ -11,11 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // add a menu
     const menu = new remote.Menu();
 
-    new customTitlebar.Titlebar({
+    var titlebar = new customTitlebar.Titlebar({
         backgroundColor: customTitlebar.Color.fromHex('#000F42'),
         icon: `https://arendelleodyssey.com/wp-content/uploads/2021/01/cropped-logo_final_final_PNG-3.png`,
         menu
     });
+    titlebar.setTitle('🌐 Arendelle Odyssey')
 
     var head = document.getElementsByTagName('head')[0];
     var sty = document.createElement('style');
