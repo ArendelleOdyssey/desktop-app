@@ -64,7 +64,7 @@
   "homepage": "https://github.com/ArendelleOdyssey/desktop-app#readme",
   "dependencies": {
     "about-window": "^1.14.0",
-    "custom-electron-titlebar": "^3.2.6",
+    "custom-electron-titlebar": "^3.2.7",
     "electron-log": "^4.3.5",
     "electron-updater": "^4.3.9",
     "fs": "0.0.1-security",
